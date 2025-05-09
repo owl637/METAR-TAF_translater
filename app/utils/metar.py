@@ -108,7 +108,7 @@ def translate_structured_metar(raw: str, icao: str = "") -> str:
             collecting_clouds = False
 
         elif collecting_clouds and "clouds at" in line:
-            clouds.append(line.strip()).replace('feet', 'フィート').replace('meters', 'メートル')
+            clouds.append(line.strip().replace('feet', 'フィート').replace('meters', 'メートル'))
             print(f"[DEBUG] continued cloud → {line.strip()}")
 
         elif line.startswith("- "):
