@@ -55,17 +55,31 @@ def translate_structured_metar(raw: str, icao: str = "") -> str:
             output.append(f"気圧：{val.replace('mb','ヘクトパスカル')}")
         elif line.startswith("sky:"):
             clouds = [line[5:].strip()]
-            output.append("雲の状況：")
         elif line.startswith("     "):  # 雲の続き
             clouds.append(line.strip())
         elif line.startswith("sea-level pressure:"):
             val = line.split(":")[1].strip()
             output.append(f"海面気圧：{val.replace('mb','ヘクトパスカル')}")
         elif line.startswith("remarks:"):
+            # 雲の出力をここで行う（備考の前）
+            if 'clouds' in locals():
+                output.append("雲の状況：")
+                for c in clouds:
+                    typ, alt = c.split(" at ")
+                    jp_typ = {
+                        "scattered clouds": "雲が点在",
+                        "broken clouds": "厚い雲"
+                    }.get(typ.strip(), typ.strip())
+                    output.append(f"- 高度{alt.strip()}に{jp_typ}")
+                del clouds  # 出力後は削除して二重出力防止
             output.append("備考：")
         elif line.startswith("- "):
             if "pressure change" in line:
-                output.append("- 過去3時間の気圧変化：" + line.split("change")[1].replace("decreasing", "減少").replace("increasing", "増加").replace("then", "その後").replace("hPa", "hPa"))
+                output.append("- 過去3時間の気圧変化：" + line.split("change")[1]
+                              .replace("decreasing", "減少")
+                              .replace("increasing", "増加")
+                              .replace("then", "その後")
+                              .replace("hPa", "hPa"))
             elif "AO2A" in line:
                 output.append("- AO2A（自動気象観測装置）、降水情報なし、着氷情報なし")
             else:
