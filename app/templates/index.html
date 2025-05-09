@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>METAR/TAF 解析ツール</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/speech.js') }}"></script>
+</head>
+<body>
+  <div class="container">
+      <!-- 左側：履歴 -->
+      <aside class="sidebar">
+        <h2>履歴</h2>
+        {% if history %}
+            <ul>
+                {% for item in history %}
+                    <li>
+                        <details>
+                            <summary>{{ item.code|e }}</summary>
+                            <pre>{{ item.result }}</pre>
+                        </details>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>履歴はまだありません</p>
+        {% endif %}
+      </aside>
+      <!-- 右側：メイン画面 -->
+      <main class="main">
+          <h1>METAR / TAF 自動解析ツール</h1>
+
+          <form class='input' method="POST">
+              <label for="code">METARまたはTAFコードを入力：</label>
+              <textarea name="code" id="code" required>{{ code }}</textarea><br>
+              <button type="submit" name="action" value="analyze">解析する</button>
+              {% if result %}
+                  <button type="submit" name="action" value="download">ダウンロード</button>
+              {% endif %}
+          </form>
+
+          {% if result %}
+              <h2>解析結果：</h2>
+              <pre id="result-text">{{ result }}</pre>
+              <button onclick="speakResult()">🔊 音声で読み上げる</button>
+          {% endif %}
+
+          {% if timeline %}
+            <details>
+              <summary><strong>TAF構文ブロック（デバッグ表示）</strong></summary>
+              <ul>
+                  {% for entry in timeline %}
+                      <li><code>{{ entry }}</code></li>
+                  {% endfor %}
+              </ul>
+            </details>
+          {% endif %}
+
+
+          {% if map_url %}
+              <h2>空港位置：<span style="color:red"><strong>{{ airport_name }}</strong></span></h2>
+              
+              <p><a href="{{ map_url }}" target="_blank">Google Mapsで位置を確認する</a></p>
+          {% endif %}
+
+      </main>
+    
+  </div>
+</body>
+</html>

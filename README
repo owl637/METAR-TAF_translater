@@ -1,0 +1,22 @@
+metar_app/
+│
+├── app/
+│   ├── __init__.py         ← Flaskアプリ初期化
+│   ├── routes.py           ← ルーティング（ビュー）
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── parser.py       ← METAR/TAFの解析・翻訳ロジック
+│   │   ├── map.py          ← Google Maps URL生成
+│   │   └── taf_timeline.py ← TAFの時系列変換
+│   └── templates/
+│       ├── layout.html     ← 共通レイアウト
+│       └── index.html      ← 入力フォーム + 出力ページ
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── timeline.js     ← TAFタイムライン表示用（必要なら）
+│
+├── run.py                  ← 起動スクリプト
+└── requirements.txt        ← 依存ライブラリ一覧
