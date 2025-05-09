@@ -52,7 +52,7 @@ def translate_structured_metar(raw: str, icao: str = "") -> str:
 
         elif line.startswith("wind:"):
             parts = line.split("gusting to")
-            base = parts[0].strip().replace("wind:", "").replace("at", "で").replace("knots", "ノット")
+            base = parts[0].strip().replace("wind:", "").replace("at", "から").replace("knots", "ノット")
 
             # 方位変換
             for abbr, jp in {
@@ -71,15 +71,15 @@ def translate_structured_metar(raw: str, icao: str = "") -> str:
 
 
         elif line.startswith("visibility:"):
-            val = line.split(":")[1].strip()
+            val = line.split(":")[1].strip().replace("miles", "マイル")
             output.append(f"視程：{val}（約{round(float(val.split()[0]) * 1.6,1)}km）")
 
         elif line.startswith("pressure:"):
             val = line.split(":")[1].strip()
-            output.append(f"気圧：{val.replace('mb','ヘクトパスカル')}")
+            output.append(f"気圧：{val.replace('mb','hPa')}")
 
         elif line.startswith("sky:"):
-            first = line[5:].strip()
+            first = line[5:].strip().replace('feet', 'フィート').replace('meters', 'メートル')
             if "clouds at" in first:
                 clouds.append(first)
                 print(f"[DEBUG] sky line → {first}")
@@ -87,7 +87,7 @@ def translate_structured_metar(raw: str, icao: str = "") -> str:
 
         elif line.startswith("sea-level pressure:"):
             val = line.split(":")[1].strip()
-            output.append(f"海面気圧：{val.replace('mb','ヘクトパスカル')}")
+            output.append(f"海面気圧：{val.replace('mb','hPa')}")
             collecting_clouds = False  # 次の構造が来たので雲情報の収集終了
 
         elif line.startswith("remarks:"):
